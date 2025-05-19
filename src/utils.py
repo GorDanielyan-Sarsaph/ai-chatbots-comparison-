@@ -56,4 +56,22 @@ def ask_yandex_gpt(question: str) -> str:
                 json=data,
                 headers=headers
             )
-            return
+            return response.json()["result"]["alternatives"][0]["message"]["text"]
+        except Exception:
+            return "Ошибка API Yandex GPT"
+    return get_mock_answer(question, "yandex")
+
+def ask_deepseek(question: str) -> str:
+    if CONFIG["DEEPSEEK_API_KEY"]:
+        try:
+            headers = {"Authorization": f"Bearer {CONFIG['DEEPSEEK_API_KEY']}"}
+            data = {"prompt": question, "max_tokens": 500}
+            response = requests.post(
+                "https://api.deepseek.com/v1/chat/completions",
+                json=data,
+                headers=headers
+            )
+            return response.json()["choices"][0]["text"]
+        except Exception:
+            return "Ошибка API DeepSeek"
+    return get_mock_answer(question, "deepseek")
